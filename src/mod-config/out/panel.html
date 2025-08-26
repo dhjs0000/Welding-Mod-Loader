@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Weld 模组管理器</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #ffffff;
+        }
+
+        .mod-card {
+            background: #2d2d2d;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .mod-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .mod-title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .mod-version {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .mod-description {
+            color: #ccc;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .mod-dependencies {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #444;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+    </style>
+</head>
+<body>
+    <h2>已安装的模组</h2>
+    <div id="mods-container"></div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        async function loadMods() {
+            const mods = await ipcRenderer.invoke('get-mods');
+            const container = document.getElementById('mods-container');
+            container.innerHTML = '';
+
+            mods.forEach(mod => {
+                const modElement = document.createElement('div');
+                modElement.className = 'mod-card';
+                modElement.innerHTML = `
+                    <div class="mod-header">
+                        <div>
+                            <span class="mod-title">${mod.name}</span>
+                            <span class="mod-version">v${mod.version}</span>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" ${mod.enabled ? 'checked' : ''}>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="mod-description">${mod.description || '暂无描述'}</div>
+                    <div class="mod-dependencies">
+                        依赖: ${Object.entries(mod.dependencies).map(([name, version]) => 
+                            `${name}@${version}`).join(', ') || '无'}
+                    </div>
+                `;
+
+                // 添加开关事件监听
+                const toggle = modElement.querySelector('input');
+                toggle.addEventListener('change', async (e) => {
+                    const success = await ipcRenderer.invoke('toggle-mod', {
+                        name: mod.name,
+                        enabled: e.target.checked
+                    });
+                    if (!success) {
+                        e.target.checked = !e.target.checked;
+                        alert(`无法${e.target.checked ? '启用' : '禁用'}模组 ${mod.name}`);
+                    }
+                });
+
+                container.appendChild(modElement);
+            });
+        }
+
+        // 初始加载
+        loadMods();
+
+        // 每30秒刷新一次
+        setInterval(loadMods, 30000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "weld-api",
+  "version": "2.2.0",
+  "description": "Weld Mod Loader Core API",
+  "main": "index.js",
+  "type": "module",
+  "weld-dependencies": {},
+  "weld-provides": ["core-api", "vscode-bridge"],
+  "dependencies": {
+    "ws": "^8.14.2"
+  },
+  "author": "VSenv Team",
+  "license": "MIT"
+}

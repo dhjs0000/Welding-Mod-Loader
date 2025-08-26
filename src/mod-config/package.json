@@ -1,0 +1,22 @@
+{
+  "name": "mod-config",
+  "version": "1.0.0",
+  "description": "VSCode中的Weld模组管理器",
+  "main": "out/extension.js",
+  "type": "module",
+  "weld-dependencies": {
+    "weld-api": "2.2.0"
+  },
+  "dependencies": {
+    "ws": "^8.14.2"
+  },
+  "weld-commands": [
+    {
+      "command": "mod-config.showPanel",
+      "title": "显示模组管理面板",
+      "category": "Weld"
+    }
+  ],
+  "author": "VSenv Team",
+  "license": "MIT"
+}
