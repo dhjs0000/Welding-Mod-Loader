@@ -104,6 +104,55 @@ export function activate() {
   global.WeldAPI.showBalloon('Hello Mod', '你好，世界！');
 }
 ```
+## 一般用户安装
+
+### 第一步：下载和安装vsenv
+
+[vsenv](https://github.com/dhjs0000/vsenv)
+
+下载后解压到任何地方，并确保添加了PATH。
+
+### 第二步：创建一个实例
+
+[vsenv](https://github.com/dhjs0000/vsenv/blob/master/README.md)
+
+根据提示，创建一个VSCode实例
+
+### 第三步：安装Weld
+
+将src\mod-loader.mjs复制到用户目录\\.vsenv\实例名\vscode\resources\app\out
+
+将mod-loader.mjs的第18行的work改成你的实例名
+
+将main.js复制为main.original.js
+
+删除main.js的所有内容，改成：
+```JavaScript
+import './mod-loader.mjs';
+import './main.original.js';
+```
+
+在实例名目录下创建mods文件夹，将src中的weld-api复制进去即可
+
+### 第四步：检验
+
+在实例目录下创建work-dev.cmd文件
+```bash
+@echo off
+set "ROOT=%USERPROFILE%\.vsenv\实例名"
+start "" "%ROOT%\vscode\Code.exe" ^
+  --user-data-dir="%ROOT%\data" ^
+    --extensions-dir="%ROOT%\extensions" ^
+      --enable-logging ^
+        --inspect=9229
+
+	timeout /t 3 >nul
+```
+将其中的实例名改成你的实例名
+
+在控制台中输入：.\work-dev.cmd即可
+
+如果出现了`[WML] Welding Mod Loader vX.X.X started`的字样代表安装完成
 
 ## 📚 文档
 

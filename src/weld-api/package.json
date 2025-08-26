@@ -2,7 +2,7 @@
   "name": "weld-api",
   "version": "2.2.0",
   "description": "Weld Mod Loader Core API",
-  "main": "index.js",
+  "main": "out/extension.js",
   "type": "module",
   "weld-dependencies": {},
   "weld-provides": ["core-api", "vscode-bridge"],
